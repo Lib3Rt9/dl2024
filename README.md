@@ -12,5 +12,6 @@ Students are expected to:
 Student Info
 =======================
 
-* Name: MyName
+* Name: Pham Gia Phuc
+* ID: M23.ICT.010
 
