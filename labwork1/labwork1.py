@@ -9,11 +9,13 @@ def df(x):
 # Gradient descent
 def gradient_descent(init_x, learning_rate, num_iters):
 
-    print(f"{'Time'}{'x'}{'f(x)'}")
+    x = init_x
+
+    print(f"{'Time':<10}{'x':<10.2}{'f(x)':<10}")
     for i in range(num_iters):
 
-        grad = df(init_x)
-        x = init_x - learning_rate * grad
+        grad = df(x)
+        x = x - learning_rate * grad
         print(f"{i+1:<10}{x:<10.2f}{f(x):<10.2f}")
 
     return x
