@@ -21,8 +21,8 @@ def gradient_descent(init_x, learning_rate, num_iters):
     return x
 
 # Initialize parameters
-initial_x = 8
-learning_rate = 0.1
+initial_x = 99
+learning_rate = 0.2
 num_iterations = 10
 
 # Run gradient descent
