@@ -1,3 +1,5 @@
 need more forcus on distances and number of iterations
 
 learning_rate tooo big
+
+* add check correct moving, threshold ,..... something......
