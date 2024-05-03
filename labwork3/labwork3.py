@@ -1,27 +1,38 @@
-from math import exp, log
+import math
 
-# y_i == y
-# y_hat_i == y_hat
-def sigmoid(z):
-    return 1/(1 + exp(-z))
+w0, w1, w2 = 0, 0, 0
+learning_rate = 0.01
 
-def y_hat(x1, x2, w0, w1, w2):
-    return sigmoid(w1 * x1 + w2 * x2 + w0)
+def sigmoid(x):
+    return 1 / (1 + math.exp(-x))
 
-def loss_func(y, y_hat):
-    L_i = -(y * log(y_hat)) + (1 - y)*(log(1 - y))
-    return L_i
+def loss(y, y_hat):
+    return -(y * math.log(y_hat) + (1 - y) * math.log(1 - y_hat))
 
-def loss_func_all_datap(x, y, y_hat):
-    J = -(1/N) * sum((y * log(y_hat)) + ((1 - y) * log(1 - y_hat)))
-    return J
+def cost_function(y, y_hat, N):
+    return -1/N * sum([loss(y[i], y_hat[i]) for i in range(N)])
 
-# partial derivative of loss function
-def loss_func_pder(x1, x2, y, y_hat):
-    dw1 = x1 * (y_hat - y)
-    dw2 = x2 * (y_hat - y)
-    dw0 = y_hat - y
-    return dw1, dw2, dw0
 
-def loss_func_pder_all_datap(N, i, y, y_hat):
-    
+X1 = [0.1, 0.3, 0.5, 0.7, 0.9]  # feature 1
+X2 = [0.2, 0.4, 0.6, 0.8, 1.0]  # feature 2
+Y = [0, 1, 0, 1, 0]   # target variable
+N = len(Y)  # number of training examples
+
+# Check if N is zero
+if N == 0:
+    print("Error: No training examples found.")
+
+else:
+    for epoch in range(1000):
+        y_hat = [sigmoid(w1 * X1[i] + w2 * X2[i] + w0) for i in range(N)]
+        cost = cost_function(Y, y_hat, N)
+        
+        # Update weights using gradient descent
+        w0 -= learning_rate * (1/N) * sum([(y_hat[i] - Y[i]) for i in range(N)])
+        w1 -= learning_rate * (1/N) * sum([(y_hat[i] - Y[i]) * X1[i] for i in range(N)])
+        w2 -= learning_rate * (1/N) * sum([(y_hat[i] - Y[i]) * X2[i] for i in range(N)])
+
+        # Print weights and cost
+        print(f"Epoch {epoch+1}")
+        print(f"w0: {w0}, w1: {w1}, w2: {w2}")
+        print(f"Cost: {cost}")
