@@ -1,49 +1,56 @@
 import math
 import matplotlib.pyplot as plt
+import numpy as np
 
-w0, w1, w2 = 0, 0, 0
-learning_rate = 0.01
+def sigmoid(z):
+    return 1 / (1 + math.exp(-z))
 
-def sigmoid(x):
-    return 1 / (1 + math.exp(-x))
+def predict(features, weights):
+    z = sum(weight * feature for weight, feature in zip(weights, features))
+    return sigmoid(z)
 
-def loss(y, y_hat):
-    return -(y * math.log(y_hat) + (1 - y) * math.log(1 - y_hat))
+def compute_gradient(features, labels, predictions):
+    differences = [prediction - label for prediction, label in zip(predictions, labels)]
+    gradient = []
+    for j in range(len(features[0])):
+        gradient.append(sum(difference * features[i][j] for i, difference in enumerate(differences)))
+    return gradient
 
-def cost_function(y, y_hat, N):
-    return -1/N * sum([loss(y[i], y_hat[i]) for i in range(N)])
+def update_weights(features, labels, weights, lr):
+    predictions = [predict(feature, weights) for feature in features]
+    gradient = compute_gradient(features, labels, predictions)
+    for i in range(len(weights)):
+        weights[i] -= lr * gradient[i] / len(features)
+    return weights
 
+def train(features, labels, lr, iters):
+    weights = [0.0 for _ in range(len(features[0]))]
+    for _ in range(iters):
+        weights = update_weights(features, labels, weights, lr)
+    return weights
 
-X1 = [0.1, 0.3, 0.5, 0.7, 0.9]  # feature 1
-X2 = [0.2, 0.4, 0.6, 0.8, 1.0]  # feature 2
-Y = [0, 1, 0, 1, 0]   # target variable
-N = len(Y)  # number of training examples
+# data
+X = [[0.2, 0.7], [0.3, 0.3], [0.4, 0.5], [0.5, 0.1]]
+y = [1, 0, 1, 0]
 
-costs = []
+learning_rate = 0.0001
+iterations = 10000
+trained_weights = train(X, y, learning_rate, iterations)
+print("Trained weights:", trained_weights)
 
-# Check if N is zero
-if N == 0:
-    print("Error: No training examples found.")
+# Plot
+x1 = np.linspace(0, 1, 100)
+x2 = np.linspace(0, 1, 100)
+X1, X2 = np.meshgrid(x1, x2)
+Z = np.zeros_like(X1)
 
-else:
-    for epoch in range(1000):
-        y_hat = [sigmoid(w1 * X1[i] + w2 * X2[i] + w0) for i in range(N)]
-        cost = cost_function(Y, y_hat, N)
-        costs.append(cost)
-        
-        # Update weights using gradient descent
-        w0 -= learning_rate * (1/N) * sum([(y_hat[i] - Y[i]) for i in range(N)])
-        w1 -= learning_rate * (1/N) * sum([(y_hat[i] - Y[i]) * X1[i] for i in range(N)])
-        w2 -= learning_rate * (1/N) * sum([(y_hat[i] - Y[i]) * X2[i] for i in range(N)])
+for i in range(X1.shape[0]):
+    for j in range(X1.shape[1]):
+        Z[i, j] = predict([X1[i, j], X2[i, j]], trained_weights)
 
-        # Print weights and cost
-        print(f"Epoch {epoch+1}")
-        print(f"w0: {w0}, w1: {w1}, w2: {w2}")
-        print(f"Cost: {cost}")
-
-    plt.plot(costs, label='Cost function')
-    plt.xlabel('Epoch')
-    plt.ylabel('Cost')
-    plt.title('Cost function over epochs')
-    plt.legend()
-    plt.show()
+plt.figure(figsize=(8, 6))
+plt.contourf(X1, X2, Z, levels=[0.0, 0.5, 1.0], cmap='rainbow')
+plt.scatter([x[0] for x in X if y[X.index(x)] == 0], [x[1] for x in X if y[X.index(x)] == 0], c='b', label='Class 0')
+plt.scatter([x[0] for x in X if y[X.index(x)] == 1], [x[1] for x in X if y[X.index(x)] == 1], c='r', label='Class 1')
+plt.legend()
+plt.show()
