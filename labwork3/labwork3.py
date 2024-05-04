@@ -1,4 +1,5 @@
 import math
+import matplotlib.pyplot as plt
 
 w0, w1, w2 = 0, 0, 0
 learning_rate = 0.01
@@ -18,6 +19,8 @@ X2 = [0.2, 0.4, 0.6, 0.8, 1.0]  # feature 2
 Y = [0, 1, 0, 1, 0]   # target variable
 N = len(Y)  # number of training examples
 
+costs = []
+
 # Check if N is zero
 if N == 0:
     print("Error: No training examples found.")
@@ -26,6 +29,7 @@ else:
     for epoch in range(1000):
         y_hat = [sigmoid(w1 * X1[i] + w2 * X2[i] + w0) for i in range(N)]
         cost = cost_function(Y, y_hat, N)
+        costs.append(cost)
         
         # Update weights using gradient descent
         w0 -= learning_rate * (1/N) * sum([(y_hat[i] - Y[i]) for i in range(N)])
@@ -36,3 +40,10 @@ else:
         print(f"Epoch {epoch+1}")
         print(f"w0: {w0}, w1: {w1}, w2: {w2}")
         print(f"Cost: {cost}")
+
+    plt.plot(costs, label='Cost function')
+    plt.xlabel('Epoch')
+    plt.ylabel('Cost')
+    plt.title('Cost function over epochs')
+    plt.legend()
+    plt.show()
