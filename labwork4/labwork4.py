@@ -86,10 +86,10 @@ class Network:
         return random()
 
     def print_network_structure(self):
-        for i, layer in enumerate(self.layers):
-            print(f"\nLayer {i+1}:")
-            for j, neuron in enumerate(layer.neurons):
-                print(f"\tNeuron {j+1}:\n\t\tBias: {neuron.bias}\n\t\tWeights: {neuron.weights}\n\t\tOutput: {neuron.output}")
+        # for i, layer in enumerate(self.layers):
+        #     print(f"\nLayer {i+1}:")
+        #     for j, neuron in enumerate(layer.neurons):
+        #         print(f"\tNeuron {j+1}:\n\t\tBias: {neuron.bias}\n\t\tWeights: {neuron.weights}\n\t\tOutput: {neuron.output}")
 
         print("\nConnections:")
         for i, layer_link in enumerate(self.layer_links):
