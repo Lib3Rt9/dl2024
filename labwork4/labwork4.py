@@ -87,44 +87,39 @@ class Network:
 
     def print_network_structure(self):
         for i, layer in enumerate(self.layers):
-            print(f"Layer {i+1}:")
+            print(f"\nLayer {i+1}:")
             for j, neuron in enumerate(layer.neurons):
-                print(f"\tNeuron {j+1}:")
-                print(f"\t\tBias: {neuron.bias}")
-                print(f"\t\tWeights: {neuron.weights}")
+                print(f"\tNeuron {j+1}:\n\t\tBias: {neuron.bias}\n\t\tWeights: {neuron.weights}\n\t\tOutput: {neuron.output}")
 
         print("\nConnections:")
         for i, layer_link in enumerate(self.layer_links):
-            print(f"From Layer {i+1} to Layer {i+2}:")
+            print(f"\nFrom Layer {i+1} to Layer {i+2}:")
             for link in layer_link.links:
                 source_index = self.layers[i].neurons.index(link.source)
                 target_index = self.layers[i+1].neurons.index(link.target)
-                print(f"\tFrom Neuron {source_index+1} to Neuron {target_index+1}: Weight = {link.weight}")
+                print(f"\tFrom Neuron {source_index+1} (weight = {link.source.weights}, bias = {link.source.bias}, output = {link.source.output}) to Neuron {target_index+1}: Weight = {link.weight}, Bias = {link.target.bias}, Output = {link.target.output}")
+
+    def train():
+        pass
 
 if __name__ == "__main__":
     
     neural_net = Network()
     neural_net.initialize_network_from_file("labwork4/nn_structure.txt")
     neural_net.initialize_weights_randomly()
-    neural_net.print_network_structure()
     
     input_data = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-    
     neural_net.feedforward(input_data)
     
-    # Loop over each layer and plot its output values
+    neural_net.print_network_structure()
+
     for i, layer in enumerate(neural_net.layers):
         # Get output values from the current layer
         output_values = [neuron.output for neuron in layer.neurons]
 
-        print(f"Output values from layer {i+1}:")
-        print(output_values)
+        # print(f"Output values from layer {i+1}:")
+        # print(output_values)
 
-        # Plot output values
-        # plt.figure(figsize=(10, 5))
-        # plt.plot(range(len(output_values)), output_values, marker='o')
-        # plt.title(f'Output values from layer {i+1}')
-        # plt.xlabel('Neuron index')
-        # plt.ylabel('Output value')
-        # plt.grid(True)
-        # plt.show()
+    # Training data
+    inputs = [[0, 0], [0, 1], [1, 0], [1, 1]]
+    targets = [[0], [1], [1], [0]]
