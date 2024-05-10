@@ -82,31 +82,49 @@ class Network:
             return inputs
 
     def random(self):
-        seed(1)
+        # seed(8)
         return random()
 
+    def print_network_structure(self):
+        for i, layer in enumerate(self.layers):
+            print(f"Layer {i+1}:")
+            for j, neuron in enumerate(layer.neurons):
+                print(f"\tNeuron {j+1}:")
+                print(f"\t\tBias: {neuron.bias}")
+                print(f"\t\tWeights: {neuron.weights}")
+
+        print("\nConnections:")
+        for i, layer_link in enumerate(self.layer_links):
+            print(f"From Layer {i+1} to Layer {i+2}:")
+            for link in layer_link.links:
+                source_index = self.layers[i].neurons.index(link.source)
+                target_index = self.layers[i+1].neurons.index(link.target)
+                print(f"\tFrom Neuron {source_index+1} to Neuron {target_index+1}: Weight = {link.weight}")
 
 if __name__ == "__main__":
+    
     neural_net = Network()
-
     neural_net.initialize_network_from_file("labwork4/nn_structure.txt")
-
     neural_net.initialize_weights_randomly()
+    neural_net.print_network_structure()
     
     input_data = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     
     neural_net.feedforward(input_data)
     
-    output_values = [neuron.output for neuron in neural_net.layers[-1].neurons]
-    
-    print("Output values from the last layer:")
-    print(output_values)
+    # Loop over each layer and plot its output values
+    for i, layer in enumerate(neural_net.layers):
+        # Get output values from the current layer
+        output_values = [neuron.output for neuron in layer.neurons]
 
-    # Plot output values
-    plt.figure(figsize=(10, 5))
-    plt.plot(range(len(output_values)), output_values, marker='o')
-    plt.title('Output values from the last layer')
-    plt.xlabel('Neuron index')
-    plt.ylabel('Output value')
-    plt.grid(True)
-    plt.show()
+        print(f"Output values from layer {i+1}:")
+        print(output_values)
+
+        # Plot output values
+        # plt.figure(figsize=(10, 5))
+        # plt.plot(range(len(output_values)), output_values, marker='o')
+        # plt.title(f'Output values from layer {i+1}')
+        # plt.xlabel('Neuron index')
+        # plt.ylabel('Output value')
+        # plt.grid(True)
+        # plt.show()
