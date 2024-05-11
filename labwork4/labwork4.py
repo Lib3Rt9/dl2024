@@ -93,11 +93,13 @@ class Network:
 
         print("\nConnections:")
         for i, layer_link in enumerate(self.layer_links):
-            print(f"\nFrom Layer {i+1} to Layer {i+2}:")
+            print("\n############################################################################################")
+            print("############################################################################################")
+            print(f"From Layer {i+1} to Layer {i+2}:")
             for link in layer_link.links:
                 source_index = self.layers[i].neurons.index(link.source)
                 target_index = self.layers[i+1].neurons.index(link.target)
-                print(f"\tFrom Neuron {source_index+1} (weight = {link.source.weights}, bias = {link.source.bias}, output = {link.source.output}) to Neuron {target_index+1}: Weight = {link.weight}, Bias = {link.target.bias}, Output = {link.target.output}")
+                print(f"From Neuron {source_index+1} \n\t(\n\t- weight = {link.source.weights}, \n\t- bias = {link.source.bias}, \n\t- output = {link.source.output}\n\t) \n to Neuron {target_index+1}: \n\t- Weight = {link.weight}, \n\t- Bias = {link.target.bias}, \n\t- Output = {link.target.output}\n")
 
     def train():
         pass
