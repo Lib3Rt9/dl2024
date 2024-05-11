@@ -1,5 +1,6 @@
 from random import seed, random, uniform
 import matplotlib.pyplot as plt
+import math as np
 
 class Neuron:
     def __init__(self, num_inputs):
@@ -81,11 +82,52 @@ class Network:
                 inputs = next_inputs
             return inputs
 
-    def backpropagation():
-        pass
+    def backpropagation(self, y_hat, learning_rate):
+        # Start from the output layer
+        for i in reversed(range(len(self.layers))):
+            layer = self.layers[i]
+            errors = []
 
-    def train():
-        pass
+            if layer == self.layers[-1]:
+                pass
+
+    def calculate_loss(self, y_true):
+        # Get the output from the last layer (after feedforward)
+        y_hat = [neuron.output for neuron in self.layers[-1].neurons]
+
+        # Calculate and return the loss
+        return Compute.binary_cross_entropy_loss(y_true, y_hat)
+
+class Compute:
+    
+    def gradient_descent(neuron, gradients, inputs, learning_rate):
+        neuron.bias -= learning_rate * gradients
+        for i in range(len(neuron.weights)):
+            neuron.weights[i] -= learning_rate * gradients * inputs[i]
+
+    def binary_cross_entropy_loss(y_true, y_hat):
+        N = len(y_true)
+        total_loss = 0
+        for i in range(N):
+            total_loss += y_true[i] * Compute.log(y_hat[i]) + (1 - y_true[i]) * Compute.log(1 - y_hat[i])
+        return -total_loss / N
+    
+    def loss_each_datapoint(y_true, y_hat):
+        return -(y_true * Compute.log(y_hat) + (1 - y_true) * Compute.log(1 - y_hat))
+    
+    def log(x):
+        n = 1000.0
+        return n * ((x ** (1/n)) - 1)
+
+class Randomize:
+    @staticmethod
+    def random_seed(s):
+        seed(s)
+        return random()
+
+    @staticmethod
+    def random_no_seed():
+        return random()
 
 class PrintingService:
     @staticmethod
@@ -100,16 +142,10 @@ class PrintingService:
                 target_index = network.layers[i+1].neurons.index(link.target)
                 print(f"From Neuron {source_index+1} \n\t(\n\t- weight = {link.source.weights}, \n\t- bias = {link.source.bias}, \n\t- output = {link.source.output}\n\t) \n to Neuron {target_index+1}: \n\t- Weight = {link.weight}, \n\t- Bias = {link.target.bias}, \n\t- Output = {link.target.output}\n")
 
-class Randomize:
-    @staticmethod
-    def random_seed(s):
-        seed(s)
-        return random()
 
-    @staticmethod
-    def random_no_seed():
-        return random()
-    
+
+
+ 
 if __name__ == "__main__":
     
     neural_net = Network()
@@ -118,8 +154,9 @@ if __name__ == "__main__":
     
     input_data = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     neural_net.feedforward(input_data)
+    # neural_net.backpropagation(input_data, 0.0001)
     
-    PrintingService.print_network_structure(neural_net)
+    # PrintingService.print_network_structure(neural_net)
 
     for i, layer in enumerate(neural_net.layers):
         # Get output values from the current layer
