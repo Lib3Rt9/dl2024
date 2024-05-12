@@ -86,33 +86,36 @@ class Network:
     def backpropagation(self, y_true, learning_rate):
         # Start from the output layer and move backwards
         for i in reversed(range(len(self.layers))):
+            
             layer = self.layers[i]
+
             if layer == self.layers[-1]:  # Output layer
                 for j, neuron in enumerate(layer.neurons):
                     # Check if y_true is long enough
                     if j < len(y_true):
-                        # Calculate the error derivative
+                        
                         error_derivative = -2 * (y_true[j] - neuron.output)
-                        # Calculate the sigmoid derivative
+                        
                         sigmoid_derivative = neuron.output * (1 - neuron.output)
-                        # Calculate the total error derivative
+                       
                         total_error_derivative = error_derivative * sigmoid_derivative
-                        # Update the weights and bias
+                       
                         Compute.gradient_descent(neuron, total_error_derivative, [neuron.input_sum], learning_rate)
                     else:
-                        # print(f"Warning: No target output for neuron {j}.")
                         pass
+                    
             else:  # Hidden layer
                 next_layer = self.layers[i + 1]
                 layer_link = self.layer_links[i]  # Get the LayerLink object for the current and next layer
+                
                 for j, neuron in enumerate(layer.neurons):
-                    # Calculate the error derivative
+                    
                     error_derivative = sum(link.weight * link.target.delta for link in layer_link.links if link.source == neuron)
-                    # Calculate the sigmoid derivative
+                    
                     sigmoid_derivative = neuron.output * (1 - neuron.output)
-                    # Calculate the total error derivative
+                    
                     total_error_derivative = error_derivative * sigmoid_derivative
-                    # Update the weights and bias
+                    
                     Compute.gradient_descent(neuron, total_error_derivative, [neuron.input_sum], learning_rate)
 
 class Compute:
