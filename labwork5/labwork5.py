@@ -8,6 +8,7 @@ class Neuron:
         self.bias = uniform(-1, 1)
         self.output = 0
         self.input_sum = 0
+        self.delta = 0  # Add this line
 
     # Sigmoid activation
     def activate(self):
@@ -37,9 +38,9 @@ class LayerLink:
         self.links = []
         for source_neuron in source_layer.neurons:
             for target_neuron in target_layer.neurons:
-                link = Link(source_neuron, target_neuron, 0)
+                link = Link(source_neuron, target_neuron, uniform(-1, 1))  # Initialize the weight randomly
                 self.links.append(link)
-                target_neuron.weights.append(link.weight)
+                source_neuron.weights.append(link.weight)  # Add the weight to the source neuron
 
 class Network:
     def __init__(self):
@@ -49,7 +50,7 @@ class Network:
     def initialize_weights_randomly(self):
         for layer_link in self.layer_links:
             for link in layer_link.links:
-                link.weight = Randomize.random_no_seed()
+                link.weight = Compute.random_no_seed()
 
     def initialize_network_from_file(self, filename):
         with open(filename, 'r') as f:
@@ -82,28 +83,44 @@ class Network:
                 inputs = next_inputs
             return inputs
 
-    def backpropagation(self, y_hat, learning_rate):
-        # Start from the output layer
+    def backpropagation(self, y_true, learning_rate):
+        # Start from the output layer and move backwards
         for i in reversed(range(len(self.layers))):
             layer = self.layers[i]
-            errors = []
-
-            if layer == self.layers[-1]:
-                pass
-
-    def calculate_loss(self, y_true):
-        # Get the output from the last layer (after feedforward)
-        y_hat = [neuron.output for neuron in self.layers[-1].neurons]
-
-        # Calculate and return the loss
-        return Compute.binary_cross_entropy_loss(y_true, y_hat)
+            if layer == self.layers[-1]:  # Output layer
+                for j, neuron in enumerate(layer.neurons):
+                    # Check if y_true is long enough
+                    if j < len(y_true):
+                        # Calculate the error derivative
+                        error_derivative = -2 * (y_true[j] - neuron.output)
+                        # Calculate the sigmoid derivative
+                        sigmoid_derivative = neuron.output * (1 - neuron.output)
+                        # Calculate the total error derivative
+                        total_error_derivative = error_derivative * sigmoid_derivative
+                        # Update the weights and bias
+                        Compute.gradient_descent(neuron, total_error_derivative, [neuron.input_sum], learning_rate)
+                    else:
+                        # print(f"Warning: No target output for neuron {j}.")
+                        pass
+            else:  # Hidden layer
+                next_layer = self.layers[i + 1]
+                layer_link = self.layer_links[i]  # Get the LayerLink object for the current and next layer
+                for j, neuron in enumerate(layer.neurons):
+                    # Calculate the error derivative
+                    error_derivative = sum(link.weight * link.target.delta for link in layer_link.links if link.source == neuron)
+                    # Calculate the sigmoid derivative
+                    sigmoid_derivative = neuron.output * (1 - neuron.output)
+                    # Calculate the total error derivative
+                    total_error_derivative = error_derivative * sigmoid_derivative
+                    # Update the weights and bias
+                    Compute.gradient_descent(neuron, total_error_derivative, [neuron.input_sum], learning_rate)
 
 class Compute:
-    
     def gradient_descent(neuron, gradients, inputs, learning_rate):
         neuron.bias -= learning_rate * gradients
         for i in range(len(neuron.weights)):
-            neuron.weights[i] -= learning_rate * gradients * inputs[i]
+            if i < len(inputs):
+                neuron.weights[i] -= learning_rate * gradients * inputs[i]
 
     def binary_cross_entropy_loss(y_true, y_hat):
         N = len(y_true)
@@ -118,8 +135,7 @@ class Compute:
     def log(x):
         n = 1000.0
         return n * ((x ** (1/n)) - 1)
-
-class Randomize:
+    
     @staticmethod
     def random_seed(s):
         seed(s)
@@ -148,23 +164,33 @@ class PrintingService:
  
 if __name__ == "__main__":
     
+    # Training data
+    inputs = [[0, 0], [0, 1], [1, 0], [1, 1]]
+    targets = [[0], [1], [1], [0]]
+
+    # Training parameters
+    epochs = 10000
+    learning_rate = 0.01
+
+    # Initialize the network
     neural_net = Network()
     neural_net.initialize_network_from_file("labwork5/nn_structure.txt")
     neural_net.initialize_weights_randomly()
     
-    input_data = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-    neural_net.feedforward(input_data)
-    # neural_net.backpropagation(input_data, 0.0001)
-    
-    # PrintingService.print_network_structure(neural_net)
+    for epoch in range(epochs):
+        for x, y_true in zip(inputs, targets):
+            # Forward pass
+            y_hat = neural_net.feedforward(x)
+            # Compute loss
+            loss = Compute.binary_cross_entropy_loss(y_true, y_hat)
+            # Backward pass
+            neural_net.backpropagation(y_true, learning_rate)
+        # Print training progress at every epoch
+        print(f"Epoch {epoch}: Loss = {loss}")
 
-    for i, layer in enumerate(neural_net.layers):
-        # Get output values from the current layer
-        output_values = [neuron.output for neuron in layer.neurons]
-
-        # print(f"Output values from layer {i+1}:")
-        # print(output_values)
-
-    # Training data
-    inputs = [[0, 0], [0, 1], [1, 0], [1, 1]]
-    targets = [[0], [1], [1], [0]]
+    # After training
+    print("Final Predicted Results:")
+    for x in inputs:
+        y_hat = neural_net.feedforward(x)
+        y_pred = [1 if i > 0.5 else 0 for i in y_hat]
+        print(f"Input: {x} -> Predicted Output: {y_pred}")
