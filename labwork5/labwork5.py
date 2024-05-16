@@ -74,14 +74,14 @@ class Network:
                 self.layer_links.append(layer_link)
 
     def feedforward(self, inputs):
-            for i, layer in enumerate(self.layers):
-                next_inputs = []
-                for neuron in layer.neurons:
-                    neuron.input_sum = sum(w * i for w, i in zip(neuron.weights, inputs))
-                    neuron.activate()
-                    next_inputs.append(neuron.output)
-                inputs = next_inputs
-            return inputs
+        for i, layer in enumerate(self.layers):
+            next_inputs = []
+            for neuron in layer.neurons:
+                neuron.input_sum = sum(w * i for w, i in zip(neuron.weights, inputs))
+                neuron.activate()
+                next_inputs.append(neuron.output)
+            inputs = next_inputs
+        return inputs
 
     def backpropagation(self, y_true, learning_rate):
         # Start from the output layer and move backwards
