@@ -1,11 +1,4 @@
-Some simple funny rules for prefix: :)
-
-+ for a new feature
-- for a modified feature
-* for a bugfix
-! for an important note
-
-Note for different versions
+!! Note for different versions
 
 - The test_code folder contains the testing versions
 - The saved_model folder contains the saved model of the testing file which the names suggest
