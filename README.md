@@ -15,3 +15,10 @@ Student Info
 * Name: Pham Gia Phuc
 * ID: M23.ICT.010
 
+
+
+Some simple funny rules for prefix: :)
+-    `+`    for a new feature
+-    `-`    for a modified feature
+-    `*`    for a bugfix
+-    `!`    for an important note
