@@ -16,5 +16,8 @@ Note for different versions
 -   OFFICIAL_22 code and equivalent model - test21 with shoe_sandal_boot dataset - 300 images
 -   OFFICIAL_22 code and equivalent model - test21 with shoe_sandal_boot_reduced dataset - 210 images - less data than OFFICIAL_22
 
+
 -> Basically, these three OFFICIAL code are the same.
+
+
   However, it is best to see the versions: OFFICIAL_22 and OFFICIAL_23
